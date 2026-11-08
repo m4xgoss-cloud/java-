@@ -8,20 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// ===================== Interfaces =====================
 
 interface Taxable {
-    double TAX_RATE = 0.15; // ثابت (public static final تلقائياً في الواجهات)
+    double TAX_RATE = 0.15;
 
     double calculateTax();
 }
 
 interface BonusCalculable {
-    // score من 1.0 إلى 5.0
+
     double calculateBonus(double performanceScore);
 }
 
-// ===================== Abstract Class =====================
 
 abstract class Employee implements Comparable<Employee>, Taxable, BonusCalculable {
 
@@ -39,13 +37,11 @@ abstract class Employee implements Comparable<Employee>, Taxable, BonusCalculabl
 
     public abstract double calculateNetSalary();
 
-    // ترتيب تنازلي حسب صافي الراتب (من الأعلى إلى الأقل)
     @Override
     public int compareTo(Employee other) {
         return Double.compare(other.calculateNetSalary(), this.calculateNetSalary());
     }
 
-    // الضريبة 15% على الدخل (صافي الراتب)
     @Override
     public double calculateTax() {
         return calculateNetSalary() * TAX_RATE;
@@ -66,7 +62,6 @@ abstract class Employee implements Comparable<Employee>, Taxable, BonusCalculabl
     }
 }
 
-// ===================== FullTimeEmployee =====================
 
 class FullTimeEmployee extends Employee {
 
@@ -83,14 +78,12 @@ class FullTimeEmployee extends Employee {
         return baseSalary + allowance;
     }
 
-    // 10% من الراتب الأساسي مضروبة في درجة التقييم
     @Override
     public double calculateBonus(double performanceScore) {
         return baseSalary * 0.10 * performanceScore;
     }
 }
 
-// ===================== ContractorEmployee =====================
 
 class ContractorEmployee extends Employee {
 
@@ -99,7 +92,7 @@ class ContractorEmployee extends Employee {
 
     public ContractorEmployee(String id, String name, LocalDate joinDate,
                               int hourlyRate, int hoursWorked) {
-        super(id, name, 0, joinDate); // الراتب الأساسي = 0
+        super(id, name, 0, joinDate); 
         this.hourlyRate = hourlyRate;
         this.hoursWorked = hoursWorked;
     }
@@ -109,20 +102,17 @@ class ContractorEmployee extends Employee {
         return (double) hourlyRate * hoursWorked;
     }
 
-    // مكافأة مقطوعة 500$ فقط إذا كان التقييم أعلى من 4.0
     @Override
     public double calculateBonus(double performanceScore) {
         return performanceScore > 4.0 ? 500.0 : 0.0;
     }
 }
 
-// ===================== Main Class (PayrollSystem) =====================
 
 public class JavaApplication3 {
 
     public static void main(String[] args) {
 
-        // 1) إنشاء قائمة من نوع Employee وتغذيتها ببيانات متنوعة
         List<Employee> employees = new ArrayList<>();
         employees.add(new FullTimeEmployee("F001", "Ahmed", 3000, LocalDate.of(2019, 3, 15), 500));
         employees.add(new FullTimeEmployee("F002", "Sara", 4500, LocalDate.of(2017, 7, 1), 800));
@@ -131,7 +121,6 @@ public class JavaApplication3 {
         employees.add(new ContractorEmployee("C002", "Khaled", LocalDate.of(2020, 9, 5), 55, 150));
         employees.add(new ContractorEmployee("C003", "Mona", LocalDate.of(2023, 2, 28), 30, 100));
 
-        // تقييم الأداء لكل موظف (من 1.0 إلى 5.0)
         Map<String, Double> scores = new HashMap<>();
         scores.put("F001", 4.2);
         scores.put("F002", 4.8);
@@ -140,12 +129,10 @@ public class JavaApplication3 {
         scores.put("C002", 3.9);
         scores.put("C003", 4.1);
 
-        // 2) الفرز الطبيعي بـ Collections.sort() (تنازلياً حسب صافي الراتب)
         Collections.sort(employees);
         System.out.println("=== Sorted by Net Salary (Descending) - Comparable ===");
         printList(employees);
 
-        // 3) إعادة الفرز بـ Comparator حسب تاريخ الانضمام (الأقدم أولاً)
         Comparator<Employee> byJoinDate = new Comparator<Employee>() {
             @Override
             public int compare(Employee e1, Employee e2) {
@@ -156,7 +143,6 @@ public class JavaApplication3 {
         System.out.println("\n=== Sorted by Join Date (Oldest First) - Comparator ===");
         printList(employees);
 
-        // 4) حساب التكلفة الإجمالية للضرائب والمكافآت (Polymorphism بدون Downcasting)
         double totalTax = 0;
         double totalBonus = 0;
         double totalNet = 0;
